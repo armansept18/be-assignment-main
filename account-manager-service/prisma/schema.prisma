@@ -14,19 +14,34 @@ datasource db {
 }
 
 model User {
-  id              String            @id @default(auto()) @map("_id") @field("_id")
+  _id              ObjectId          @id @default(auto())
   username        String?
   email           String            @unique
   password        String
+  createdAt       DateTime          @default(now())
   paymentAccount  PaymentAccount[]
 }
 
 model PaymentAccount {
-  id             String   @id @default(auto()) @map("_id") @field("_id")
-  user           User     @relation(fields: [userId], references: [id])
-  userId         String   @map("_userId")
-  accountNumber  String   @unique
+  _id             ObjectId         @id @default(auto())
+  type           String
+  userId         ObjectId         @map("_userId")
+  user           User             @relation(fields: [userId], references: [_id])
+  accountNumber  String           @unique
   accountName    String
   bankName       String
   expDate        String
+  createdAt      DateTime         @default(now())
+  paymentHistory PaymentHistory[]
+}
+
+model PaymentHistory {
+  _id         ObjectId       @id @default(auto())
+  amount      Float
+  timestamp   DateTime
+  toAddress   String    
+  status      String    
+  accountId   ObjectId   
+  account     PaymentAccount @relation(fields: [accountId], references: [_id])
+  createdAt   DateTime       @default(now())
 }
